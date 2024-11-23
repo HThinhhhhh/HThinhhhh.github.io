@@ -1,9 +1,8 @@
-
-#include <iostream>
-#include <iomanip>
+﻿#include<iostream>
+#include<iomanip>
 #include<string>
 #include<algorithm>
-#include <ctime>
+#include<ctime>
 #include<vector>
 
 #define cls system("cls")
@@ -14,7 +13,7 @@ using namespace std;
 void Print_Function(const string name[], const int n)
 {
 	for (int i = 1; i < n; i++)
-		cout << '(' << i << ')' << name[i] << endl;
+		cout << "(" << i << ")" << name[i] << endl;
 	cout << endl;
 	cout << "(0)" << name[0] << endl;
 }
@@ -29,7 +28,7 @@ int Get_UserChoice(const int n)
 		cin >> input;
 		isUserChoiceValid = (0 <= input && input < n);
 		if (!isUserChoiceValid)
-			cout << "Lua chon khong hop le! Hay nhap lai!!!" << endl;
+			cout << "Lua chon khong hop le!Hay nhap lai!!!" << endl;
 	} while (!isUserChoiceValid);
 	return input;
 }
@@ -42,9 +41,17 @@ int Get_PositiveINT(const string prompt)
 		cout << prompt;
 		cin >> input;
 		if (input < 1)
-			cout << "Vui long nhap so nguyen duong!!!" << endl;
+			cout << "Lua chon khong hop le!Hay nhap lai!!!" << endl;
 	} while (input < 1);
-		return input;
+	return input;
+}
+
+int Get_max_element(int* arr, int n)
+{
+	int max = arr[0];
+	for (int i = 0; i < n; i++)
+		if (max < arr[i]) max = arr[i];
+	return max;
 }
 
 bool ChangeMode(string prompt)
@@ -57,13 +64,13 @@ bool ChangeMode(string prompt)
 		cout << prompt;
 		cin >> input;
 		isUserChoiceValid = input == '1' || input == '2';
-		if(!isUserChoiceValid)
-			cout<< "Lua chon khong hop le!!! Hay nhap lai!!!\n";
+		if (!isUserChoiceValid)
+			cout << "Lua chon khong hop le!!! Hay nhap lai!!!\n";
 	} while (!isUserChoiceValid);
 	return input == '1';
 }
 
-void Generate_Array(int* arr, int n, bool automatic)
+void Generate_array(int* arr, int n, bool automatic)
 {
 	if (automatic)
 	{
@@ -72,9 +79,8 @@ void Generate_Array(int* arr, int n, bool automatic)
 		return;
 	}
 	cout << "Khoi tao gia tri cho mang:\n";
-	for (int i = 0; i < n; i++)
-	{
-		cout << "Nhap gia tri cho phan tu arr[" << i << "]: ";
+	for (int i = 0; i < n; i++) {
+		cout << "Nhap gia tri cho phan tu a[" << i << "]: ";
 		cin >> arr[i];
 	}
 }
@@ -83,78 +89,88 @@ void Print_Array(int* arr, int n, string prompt)
 {
 	cout << prompt << endl;
 	for (int i = 0; i < n; i++)
-		cout << arr[i] << '\t';
+		cout << arr[i] << "\t";
 	cout << endl;
 	pause;
 }
 
-void PrintArray(float* arr, int n, string prompt)
+void Insertion_sort(int* arr, const int n)
 {
-	cout << prompt << endl;
-	for (int i = 0; i < n; i++)
-		cout << arr[i] << '\t';
-	cout << endl;
-	pause;
-}
-
-int Get_max_element(int* arr, int n)
-{
-	int max = arr[0];
-	for (int i = 0; i < n; i++)
+	for (int i = 1; i < n; i++)
 	{
-		if (arr[i] > max)
-			max = arr[i];
-	}
-	return max;
-}
-
-void ShellSort(int* arr, int n)
-{
-	int step = Get_PositiveINT("Nhap so step ban dau ban muon: ");
-	for (int gap = n / step; gap > 0; gap /= step)
-	{
-		for (int i = gap; i < n; i++)
+		int j = i - 1, x = arr[i];
+		while (j >= 0 && x > arr[j])
 		{
+			arr[j + 1] = arr[j];
+			j--;
+		}
+		arr[j + 1] = x;
+	}
+}
+
+void ShellSort(int* arr, int n, int& d)
+{
+	Insertion_sort(arr, n);
+	Print_Array(arr, n, "Mang truoc khi sort:");
+	cout << endl;
+	int step = Get_PositiveINT("Nhap vao step ban dau ban muon: ");
+	for (int gap = n / step; gap > 0; gap /= 2)
+	{
+		for (int i = gap; i < n; i++) {
 			int temp = arr[i], j;
-			for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)
+			d++;
+			for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
 				arr[j] = arr[j - gap];
+				d++;
+			}
 			arr[j] = temp;
-		}
-		Print_Array(arr, n, "Mang sau khi duoc sort voi gap = " + to_string(gap));
-		if (gap == 1)
-		{
-			cout << "Da Sort xong!!!\n";
-			pause;
+			d++;
 		}
 	}
+	Print_Array(arr, n, "Mang sau khi sort:");
+	cout << "So lan thuc hien phep gan: " << d << endl;
+	pause;
 }
 
-void CountingSort(int* arr, int n)
+void CountingSort(int* arr, int n, int& d)
 {
+	Insertion_sort(arr, n);
+	Print_Array(arr, n, "Mang sau khi sort nguoc lai:");
+	cout << endl;
 	int max = Get_max_element(arr, n);
 	int* count = new int[max + 1] {0};
 	int* output = new int[n];
 	cout << endl;
 	for (int i = 0; i < n; i++)
+	{
 		count[arr[i]]++;
+		d++;
+	}
 	for (int i = 1; i <= max; i++)
+	{
 		count[i] += count[i - 1];
+		d++;
+	}
 	for (int i = n - 1; i >= 0; i--)
 	{
 		output[count[arr[i]] - 1] = arr[i];
 		count[arr[i]]--;
+		d++;
 	}
-	for (int i = 0; i < n; i++) 
+	for (int i = 0; i < n; i++)
+	{
 		arr[i] = output[i];
+		d++;
+	}
 	Print_Array(output, n, "Mang sau khi duoc sort:");
 	cout << "Hoan thanh sap xep!!!\n";
+	cout << "So lan thuc hien phep gan: " << d << endl;
 	pause;
-
 	delete[] count;
 	delete[] output;
 }
 
-void CountSort(int* arr, int n,int exp)
+void CountSort(int* arr, int n, int exp, int& d)
 {
 	int max = Get_max_element(arr, n);
 	int count[10] = { 0 };
@@ -164,28 +180,41 @@ void CountSort(int* arr, int n,int exp)
 	{
 		int digit = (arr[i] / exp) % 10;
 		count[digit]++;
+		d++;
 	}
-	for (int i = 1; i <10; i++)
+	for (int i = 1; i < 10; i++) {
 		count[i] += count[i - 1];
+		d++;
+	}
 	for (int i = n - 1; i >= 0; i--)
 	{
 		int digit = (arr[i] / exp) % 10;
 		output[count[digit] - 1] = arr[i];
 		count[digit]--;
+		d++;
 	}
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < n; i++) {
 		arr[i] = output[i];
+		d++;
+	}
 
 	delete[] output;
 }
 
-void RadixSort(int* arr, int n)
+void RadixSort(int* arr, int n, int& d)
 {
+	Insertion_sort(arr, n);
+	Print_Array(arr, n, "Mang sau khi sort nguoc lai:");
+	cout << endl;
 	int m = Get_max_element(arr, n);
 	for (int exp = 1; m / exp > 0; exp *= 10)
-		CountSort(arr, n,exp);
+	{
+		CountSort(arr, n, exp, d);
+		d++;
+	}
 	Print_Array(arr, n, "Mang sau khi sort:");
 	cout << "Hoan thanh sap xep!!!\n";
+	cout << "So lan thuc hien phep gan: " << d << endl;
 	pause;
 }
 
@@ -200,75 +229,123 @@ void insertionSort(vector<float>& bucket) {
 		bucket[j + 1] = key;
 	}
 }
-void BucketSort(float* arr, int n) 
+void PrintArray(float* arr, int n, string prompt)
 {
-	vector <float>* b=new vector<float>[n];
+	cout << prompt << endl;
+	for (int i = 0; i < n; i++)
+		cout << arr[i] << '\t';
+	cout << endl;
+	pause;
+}
+void BucketSort(vector<float>& arr, int& d)
+{
+	int n = arr.size(); // Lấy kích thước của vector
+	vector<vector<float>> b(n);
+
 	for (int i = 0; i < n; i++)
 	{
-		int bi = n * arr[i];
+		int bi = n * arr[i]; // Tính bucket index
 		b[bi].push_back(arr[i]);
+		d++;
 	}
-	for (int i = 0; i < n; i++)
-		insertionSort(b[i]);
+	for (int i = 0; i < n; i++) {
+		insertionSort(b[i]); // Sắp xếp trong từng bucket
+		d++;
+	}
 	int index = 0;
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < b[i].size(); j++) {
 			arr[index++] = b[i][j];
+			d++;
 		}
+		d++;
 	}
-	PrintArray(arr, n, "Mang sau khi sort:");
-	delete[] b;
-	pause;
+	PrintArray(arr.data(), n, "Mang sau khi sort:"); // Chuyển vector thành mảng để in
 }
+
 
 int main()
 {
 	srand(time(0));
-	const string Sortingname[] =
-	{
+	const string SortName[] = {
 		"Ket thuc chuong trinh",
 		"Shell Sort",
 		"Counting Sort",
 		"Radix Sort",
 		"Bucket Sort"
 	};
-	const int countSort = sizeof(Sortingname) / sizeof(string);
+	const int countSort = sizeof(SortName) / sizeof(string);
 	int userchoice, n;
 	bool automatic;
+	float a[] = { 0.42,0.32,0.23,0.52,0.25,0.47,0.51 };
+	const int n1 = sizeof(a) / sizeof(float);
 	do
 	{
+		int dem = 0;
 		cls;
-		Print_Function(Sortingname, countSort);
+		Print_Function(SortName, countSort);
 		userchoice = Get_UserChoice(countSort);
+		int* ptr = NULL;
 		if (userchoice == 0)
 			return 0;
 		cls;
-		cout << Sortingname[userchoice] << endl;
-		automatic = ChangeMode("Nhap vao che do ban muon: ");
-		n = Get_PositiveINT("Nhap so luong: ");
-		cls;
-		cout << "|*------------------------------------------------------------*|\n";
-		cout << Sortingname[userchoice] << "\n\t" << "Che do: " << (automatic ? "Automatic\n" : "Manual\n") << "\tSo luong: " << n << endl;
-		int* ptr = new int[n];
-		
-		Generate_Array(ptr, n, automatic);
-		Print_Array(ptr, n, "Gia tri mang sau khi khoi tao:");
+		cout << SortName[userchoice] << endl;
+		if (userchoice != 4)
+		{
+			automatic = ChangeMode("Nhap vao che do ban muon: ");
+			n = Get_PositiveINT("Nhap so luong: ");
+			ptr = new int[n];
+			cls;
+			cout << "|*------------------------------------------------------------*|\n";
+			cout << SortName[userchoice] << "\n\t" << "Che do: " << (automatic ? "Automatic\n" : "Manual\n") << "\tSo luong: " << n << endl;
+			Generate_array(ptr, n, automatic);
+			Print_Array(ptr, n, "Gia tri mang sau khi khoi tao:");
+		}
+
 		switch (userchoice)
 		{
 		case 1:
-			ShellSort(ptr, n);
+			ShellSort(ptr, n, dem);
 			break;
 		case 2:
-			CountingSort(ptr, n);
+			CountingSort(ptr, n, dem);
 			break;
 		case 3:
-			RadixSort(ptr, n);
+			RadixSort(ptr, n, dem);
 			break;
 		case 4:
-			BucketSort(ptr, n);
+		{
+			int size;
+			automatic = ChangeMode("Nhap vao che do ban muon: ");
+			size = Get_PositiveINT("Nhap so luong phan tu cua mang: ");
+			vector<float> arr(size);
+
+			if (automatic)
+			{
+				cout << "Mang dang duoc khoi tao tu dong...\n";
+				for (int i = 0; i < size; i++)
+					arr[i] = static_cast<float>(rand() % 100) / 100; // Giá trị ngẫu nhiên [0, 1)
+			}
+			else
+			{
+				cout << "Nhap cac phan tu cho mang (gia tri [0, 1)): \n";
+				for (int i = 0; i < size; i++)
+				{
+					cout << "Nhap phan tu thu " << i + 1 << ": ";
+					cin >> arr[i];
+				}
+			}
+			PrintArray(arr.data(), size, "Mang truoc khi sort:");
+			cout << endl;
+			BucketSort(arr, dem);
+			cout << "So lan thuc hien phep gan: " << dem << endl;
+			pause;
 			break;
 		}
-		delete[] ptr;
+
+		};
+		if (ptr != NULL)
+			delete[] ptr;
 	} while (userchoice != 0);
 	return 0;
 }
